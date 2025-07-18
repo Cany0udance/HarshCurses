@@ -1,0 +1,18 @@
+{
+  "${modID}:SatansGrudge": {
+    "NAME": "Satan's Grudge",
+    "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, lose 2 HP and gain as much ${modID}:Begrudged whenever a card is Exhausted."
+  },
+  "${modID}:Clog": {
+    "NAME": "Clog",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL While in hand, whenever a card is discarded, shuffle a *Clog into your draw pile."
+  },
+  "${modID}:BadCode": {
+    "NAME": "Bad Code",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL When you draw this card, Channel 1 ${modID}:Brick."
+  },
+  "${modID}:TheBigSad": {
+    "NAME": "The Big Sad",
+    "DESCRIPTION": "Soulbound. Unplayable. NL When you draw this card, enter ${modID}:Depression and Exhaust. NL Whenever you enter Wrath, ${modID}:Exhume this card and shuffle it into your draw pile."
+  }
+}

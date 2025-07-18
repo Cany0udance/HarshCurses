@@ -1,0 +1,52 @@
+[
+  {
+    "PROPER_NAME": "This is displayed in the tooltip.",
+    "NAMES": [
+      "these",
+      "are",
+      "detected",
+      "in",
+      "the",
+      "text"
+    ],
+    "DESCRIPTION": "This is displayed in the tooltip. Spaces should not be used be avoided in NAMES, with the exception of multi-word keywords (see next entry)."
+  },
+  {
+    "PROPER_NAME": "Multiword Keyword",
+    "NAMES": [
+      "multiword keyword",
+      "multiword_keyword",
+      "multiword_keywords"
+    ],
+    "DESCRIPTION": "Make sure the first element in NAMES has no underscores. The rest should use _ in the place of spaces. In card text, you'll use the underscore versions."
+  },
+  {
+    "PROPER_NAME": "Begrudged",
+    "NAMES": [
+      "Begrudged",
+      "Begrudged"
+    ],
+    "DESCRIPTION": "Heal equal to your Begrudged at the end of combat. Other healing sources will prioritize reducing Begrudged stacks instead of healing you directly."
+  },
+  {
+    "PROPER_NAME": "Brick",
+    "NAMES": [
+      "Brick"
+    ],
+    "DESCRIPTION": "Orb: Ignores #yFocus. Deals #b1 damage to the enemy with the most HP. When #yEvoked, #yChannel #b1 #yBrick."
+  },
+  {
+    "PROPER_NAME": "Depression",
+    "NAMES": [
+      "Depression"
+    ],
+    "DESCRIPTION": "In this #yStance, you deal half attack damage. When entering this #yStance from #yCalm, don't gain Energy."
+  },
+  {
+    "PROPER_NAME": "Exhume",
+    "NAMES": [
+      "Exhume"
+    ],
+    "DESCRIPTION": "Move a card out of your #yExhaust pile."
+  }
+]

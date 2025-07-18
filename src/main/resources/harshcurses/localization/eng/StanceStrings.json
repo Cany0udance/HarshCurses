@@ -1,0 +1,6 @@
+{
+  "${modID}:Depression": {
+    "NAME": "Depression",
+    "DESCRIPTION": ["Your Attacks deal #b50% less damage. If entering this Stance from #yCalm, don't gain Energy."]
+  }
+}

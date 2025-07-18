@@ -1,0 +1,10 @@
+{
+  "${modID}:Brick": {
+    "NAME": "Brick",
+    "DESCRIPTION": [
+      "#yPassive: This Orb ignores #yFocus. Deal #b",
+      " damage to the enemy with the most HP.",
+      " NL #yEvoke: #yChannel a #yBrick."
+    ]
+  }
+}
