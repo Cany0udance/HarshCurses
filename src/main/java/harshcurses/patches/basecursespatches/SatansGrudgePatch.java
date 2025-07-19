@@ -1,4 +1,4 @@
-package harshcurses.patches;
+package harshcurses.patches.basecursespatches;
 
 import com.badlogic.gdx.graphics.Color;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;

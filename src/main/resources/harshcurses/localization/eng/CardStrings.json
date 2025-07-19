@@ -14,5 +14,17 @@
   "${modID}:TheBigSad": {
     "NAME": "The Big Sad",
     "DESCRIPTION": "Soulbound. Unplayable. NL When you draw this card, enter ${modID}:Depression and Exhaust. NL Whenever you enter Wrath, ${modID}:Exhume this card and shuffle it into your draw pile."
+  },
+  "${modID}:CultistMicrophone": {
+    "NAME": "Cultist Microphone",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL When you draw this card, you feel talkative."
+  },
+  "${modID}:DeadOff": {
+    "NAME": "Dead Off",
+    "DESCRIPTION": "Soulbound. Unplayable. NL When you draw this card, move all hermit:Dead_On cards to the left side of your hand."
+  },
+  "${modID}:SplitCrap": {
+    "NAME": "Split: Crap",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL When you draw this card, slimeboundmod:Split into a ${modID}:Crap_Slime."
   }
 }

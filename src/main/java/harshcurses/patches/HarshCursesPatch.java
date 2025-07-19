@@ -6,10 +6,7 @@ import com.megacrit.cardcrawl.cards.curses.AscendersBane;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
-import harshcurses.cards.BadCode;
-import harshcurses.cards.Clog;
-import harshcurses.cards.SatansGrudge;
-import harshcurses.cards.TheBigSad;
+import harshcurses.cards.*;
 import javassist.CtBehavior;
 
 @SpirePatch(
@@ -39,7 +36,6 @@ public class HarshCursesPatch {
         switch (player.chosenClass) {
             case IRONCLAD:
                 return new SatansGrudge();
-            // Add more cases as you create more curses
             case THE_SILENT:
                  return new Clog();
              case DEFECT:
@@ -47,8 +43,7 @@ public class HarshCursesPatch {
              case WATCHER:
                  return new TheBigSad();
             default:
-                // Fallback to original Ascender's Bane for unsupported characters
-                return new AscendersBane();
+                return new CultistMicrophone();
         }
     }
 

@@ -1,4 +1,4 @@
-package harshcurses.patches;
+package harshcurses.patches.basecursespatches;
 
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePostfixPatch;

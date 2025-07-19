@@ -25,6 +25,9 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.localization.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.clapper.util.classutil.ClassFilter;
+import org.clapper.util.classutil.ClassFinder;
+import org.clapper.util.classutil.ClassInfo;
 import org.scannotation.AnnotationDB;
 
 import java.nio.charset.StandardCharsets;
@@ -217,10 +220,33 @@ public class HarshCurses implements
         }
     }
     @Override
-    public void receiveEditCards() { //somewhere in the class
-        new AutoAdd(modID) //Loads files from this mod
-                .packageFilter(BaseCard.class) //In the same package as this class
-                .setDefaultSeen(true) //And marks them as seen in the compendium
-                .cards(); //Adds the cards
+    public void receiveEditCards() {
+        new AutoAdd(modID)
+                .packageFilter(BaseCard.class)
+                .filter(new ClassFilter() {
+                    @Override
+                    public boolean accept(ClassInfo classInfo, ClassFinder classFinder) {
+                        String className = classInfo.getClassName();
+
+                        // Define conditional loading requirements
+                        if (className.endsWith("DeadOff")) {
+                            return Loader.isModLoaded("Hermit") || Loader.isModLoaded("downfall");
+                        }
+
+                        if (className.endsWith("SplitCrap")) {
+                            return Loader.isModLoaded("downfall");
+                        }
+
+                        // Add more conditional cards here as needed:
+                        // if (className.endsWith("AnotherCard")) {
+                        //     return Loader.isModLoaded("somemod");
+                        // }
+
+                        // Accept all other cards
+                        return true;
+                    }
+                })
+                .setDefaultSeen(true)
+                .cards();
     }
 }
