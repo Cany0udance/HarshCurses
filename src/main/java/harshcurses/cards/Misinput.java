@@ -1,16 +1,20 @@
 package harshcurses.cards;
 
+import champ.powers.CounterPower;
+import com.badlogic.gdx.graphics.Color;
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.SoulboundField;
-import com.megacrit.cardcrawl.actions.defect.ChannelAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.powers.watcher.VigorPower;
 import harshcurses.HarshCurses;
-import harshcurses.orbs.Brick;
+import harshcurses.orbs.CrapSlime;
 import harshcurses.util.CardStats;
+import slimebound.actions.SlimeSpawnAction;
 
-public class BadCode extends BaseCard {
-    public static final String ID = HarshCurses.makeID("BadCode");
+public class Misinput extends BaseCard {
+    public static final String ID = HarshCurses.makeID("Misinput");
     private static final CardStats info = new CardStats(
             CardColor.CURSE,
             CardType.CURSE,
@@ -19,10 +23,9 @@ public class BadCode extends BaseCard {
             -2
     );
 
-    public BadCode() {
+    public Misinput() {
         super(ID, info);
         SoulboundField.soulbound.set(this, true);
-        this.isEthereal = true;
     }
 
     @Override
@@ -31,11 +34,21 @@ public class BadCode extends BaseCard {
     }
 
     public void triggerWhenDrawn() {
-        this.addToBot(new ChannelAction(new Brick()));
+        this.flash(Color.RED);
+
+        // Remove Vigor
+        if (AbstractDungeon.player.hasPower(VigorPower.POWER_ID)) {
+            AbstractDungeon.player.powers.removeIf(power -> power.ID.equals(VigorPower.POWER_ID));
+        }
+
+        // Remove Counter
+        if (AbstractDungeon.player.hasPower(CounterPower.POWER_ID)) {
+            AbstractDungeon.player.powers.removeIf(power -> power.ID.equals(CounterPower.POWER_ID));
+        }
     }
 
     @Override
     public AbstractCard makeCopy() {
-        return new BadCode();
+        return new Misinput();
     }
 }

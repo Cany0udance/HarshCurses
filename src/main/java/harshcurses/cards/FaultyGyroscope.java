@@ -1,16 +1,14 @@
 package harshcurses.cards;
 
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.SoulboundField;
-import com.megacrit.cardcrawl.actions.defect.ChannelAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import harshcurses.HarshCurses;
-import harshcurses.orbs.Brick;
 import harshcurses.util.CardStats;
 
-public class BadCode extends BaseCard {
-    public static final String ID = HarshCurses.makeID("BadCode");
+public class FaultyGyroscope extends BaseCard {
+    public static final String ID = HarshCurses.makeID("FaultyGyroscope");
     private static final CardStats info = new CardStats(
             CardColor.CURSE,
             CardType.CURSE,
@@ -19,10 +17,9 @@ public class BadCode extends BaseCard {
             -2
     );
 
-    public BadCode() {
+    public FaultyGyroscope() {
         super(ID, info);
         SoulboundField.soulbound.set(this, true);
-        this.isEthereal = true;
     }
 
     @Override
@@ -30,12 +27,8 @@ public class BadCode extends BaseCard {
         // This method will never be called as the card is unplayable
     }
 
-    public void triggerWhenDrawn() {
-        this.addToBot(new ChannelAction(new Brick()));
-    }
-
     @Override
     public AbstractCard makeCopy() {
-        return new BadCode();
+        return new FaultyGyroscope();
     }
 }

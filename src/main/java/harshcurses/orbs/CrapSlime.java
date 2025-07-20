@@ -23,7 +23,7 @@ public class CrapSlime extends SpawnedSlime {
                 ID,
                 new Color(0.6F, 0.4F, 0.2F, 100.0F), // Brown color for crap theme
                 "harshcurses/images/orbs/CrapSlime.atlas",
-                "images/monsters/theBottom/slimeS/skeleton.json",
+                "harshcurses/images/orbs/CrapSlime.json",
                 false, // not medium scale
                 false, // not alt positioning
                 0, // passive amount (not used for this slime)
@@ -41,7 +41,7 @@ public class CrapSlime extends SpawnedSlime {
     public void updateDescription() {
         this.name = "Crap Slime";
         // Update description to show it adds Slimed to discard pile
-        this.description = "Adds a #ySlimed into your discard pile each turn.";
+        this.description = "Adds a #ySlimed into your discard pile at the start of your turn.";
     }
 
     @Override

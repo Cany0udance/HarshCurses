@@ -1,16 +1,18 @@
 package harshcurses.cards;
 
+import automaton.actions.AddToFuncAction;
+import automaton.cards.AbstractBronzeCard;
+import com.badlogic.gdx.graphics.Color;
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.SoulboundField;
-import com.megacrit.cardcrawl.actions.defect.ChannelAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import harshcurses.HarshCurses;
-import harshcurses.orbs.Brick;
 import harshcurses.util.CardStats;
 
-public class BadCode extends BaseCard {
-    public static final String ID = HarshCurses.makeID("BadCode");
+public class CoconutJPG extends BaseCard {
+    public static final String ID = HarshCurses.makeID("CoconutJPG");
     private static final CardStats info = new CardStats(
             CardColor.CURSE,
             CardType.CURSE,
@@ -19,10 +21,9 @@ public class BadCode extends BaseCard {
             -2
     );
 
-    public BadCode() {
+    public CoconutJPG() {
         super(ID, info);
         SoulboundField.soulbound.set(this, true);
-        this.isEthereal = true;
     }
 
     @Override
@@ -31,11 +32,12 @@ public class BadCode extends BaseCard {
     }
 
     public void triggerWhenDrawn() {
-        this.addToBot(new ChannelAction(new Brick()));
+        // Encode this card (add to function sequence)
+        AbstractDungeon.actionManager.addToBottom(new AddToFuncAction(this, AbstractDungeon.player.hand));
     }
 
     @Override
     public AbstractCard makeCopy() {
-        return new BadCode();
+        return new CoconutJPG();
     }
 }

@@ -1,16 +1,17 @@
 package harshcurses.cards;
 
+import automaton.actions.AddToFuncAction;
+import collector.actions.GainReservesAction;
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.SoulboundField;
-import com.megacrit.cardcrawl.actions.defect.ChannelAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import harshcurses.HarshCurses;
-import harshcurses.orbs.Brick;
 import harshcurses.util.CardStats;
 
-public class BadCode extends BaseCard {
-    public static final String ID = HarshCurses.makeID("BadCode");
+public class LichsSoul extends BaseCard {
+    public static final String ID = HarshCurses.makeID("LichsSoul");
     private static final CardStats info = new CardStats(
             CardColor.CURSE,
             CardType.CURSE,
@@ -19,10 +20,9 @@ public class BadCode extends BaseCard {
             -2
     );
 
-    public BadCode() {
+    public LichsSoul() {
         super(ID, info);
         SoulboundField.soulbound.set(this, true);
-        this.isEthereal = true;
     }
 
     @Override
@@ -31,11 +31,16 @@ public class BadCode extends BaseCard {
     }
 
     public void triggerWhenDrawn() {
-        this.addToBot(new ChannelAction(new Brick()));
+        // Encode this card (add to function sequence)
+        AbstractDungeon.actionManager.addToBottom(new GainReservesAction(-1));
+    }
+
+    public static boolean isLichsSoul(AbstractCard card) {
+        return card instanceof LichsSoul;
     }
 
     @Override
     public AbstractCard makeCopy() {
-        return new BadCode();
+        return new LichsSoul();
     }
 }

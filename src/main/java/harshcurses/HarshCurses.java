@@ -6,6 +6,8 @@ import basemod.interfaces.EditCardsSubscriber;
 import basemod.interfaces.EditKeywordsSubscriber;
 import basemod.interfaces.EditStringsSubscriber;
 import basemod.interfaces.PostInitializeSubscriber;
+import com.badlogic.gdx.graphics.Color;
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import harshcurses.cards.BaseCard;
 import harshcurses.util.GeneralUtils;
 import harshcurses.util.KeywordInfo;
@@ -237,10 +239,25 @@ public class HarshCurses implements
                             return Loader.isModLoaded("downfall");
                         }
 
-                        // Add more conditional cards here as needed:
-                        // if (className.endsWith("AnotherCard")) {
-                        //     return Loader.isModLoaded("somemod");
-                        // }
+                        if (className.endsWith("BlackDiamond")) {
+                            return Loader.isModLoaded("downfall");
+                        }
+
+                        if (className.endsWith("FaultyGyroscope")) {
+                            return Loader.isModLoaded("downfall");
+                        }
+
+                        if (className.endsWith("Misinput")) {
+                            return Loader.isModLoaded("downfall");
+                        }
+
+                        if (className.endsWith("CoconutJPG")) {
+                            return Loader.isModLoaded("downfall");
+                        }
+
+                        if (className.endsWith("LichsSoul")) {
+                            return Loader.isModLoaded("downfall");
+                        }
 
                         // Accept all other cards
                         return true;

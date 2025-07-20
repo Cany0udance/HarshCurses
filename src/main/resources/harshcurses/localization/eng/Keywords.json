@@ -55,6 +55,6 @@
       "Crap Slime",
       "Crap_Slime"
     ],
-    "DESCRIPTION": "Adds a #ySlimed into your discard pile each turn."
+    "DESCRIPTION": "Adds a #ySlimed into your discard pile at the start of your turn."
   }
 ]

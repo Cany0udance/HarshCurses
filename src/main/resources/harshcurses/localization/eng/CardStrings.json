@@ -26,5 +26,25 @@
   "${modID}:SplitCrap": {
     "NAME": "Split: Crap",
     "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL When you draw this card, slimeboundmod:Split into a ${modID}:Crap_Slime."
+  },
+  "${modID}:BlackDiamond": {
+    "NAME": "Black Diamond",
+    "DESCRIPTION": "Soulbound. guardianmod:Gem. NL When you draw this card, increase each of your debuffs by 1."
+  },
+  "${modID}:FaultyGyroscope": {
+    "NAME": "Faulty Gyroscope",
+    "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, hexamod:Advance after you hexamod:Retract and hexamod:Retract after you hexamod:Advance."
+  },
+  "${modID}:Misinput": {
+    "NAME": "Misinput",
+    "DESCRIPTION": "Soulbound. Unplayable. NL When you draw this card, lose ALL your Vigor and champ:Counter."
+  },
+  "${modID}:CoconutJPG": {
+    "NAME": "Coconut.jpg",
+    "DESCRIPTION": "Soulbound. Unplayable. NL When you draw this card, bronze:Encode it."
+  },
+  "${modID}:LichsSoul": {
+    "NAME": "Lich's Soul",
+    "DESCRIPTION": "Soulbound. Unplayable. NL When you draw this card, lose 1 collector:Reserve. NL This card cannot be Exhausted."
   }
 }
