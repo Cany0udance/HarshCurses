@@ -2,12 +2,13 @@ package harshcurses;
 
 import basemod.AutoAdd;
 import basemod.BaseMod;
-import basemod.interfaces.EditCardsSubscriber;
-import basemod.interfaces.EditKeywordsSubscriber;
-import basemod.interfaces.EditStringsSubscriber;
-import basemod.interfaces.PostInitializeSubscriber;
+import basemod.interfaces.*;
 import com.badlogic.gdx.graphics.Color;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import gremlin.characters.GremlinCharacter;
+import gremlin.patches.GremlinMobState;
 import harshcurses.cards.BaseCard;
 import harshcurses.util.GeneralUtils;
 import harshcurses.util.KeywordInfo;
@@ -32,6 +33,7 @@ import org.clapper.util.classutil.ClassFinder;
 import org.clapper.util.classutil.ClassInfo;
 import org.scannotation.AnnotationDB;
 
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -40,10 +42,15 @@ public class HarshCurses implements
         EditStringsSubscriber,
         EditKeywordsSubscriber,
         EditCardsSubscriber,
+        PostBattleSubscriber,
         PostInitializeSubscriber {
     public static ModInfo info;
     public static String modID; //Edit your pom.xml to change this
-    static { loadModInfo(); }
+
+    static {
+        loadModInfo();
+    }
+
     private static final String resourcesFolder = checkResourcesPath();
     public static final Logger logger = LogManager.getLogger(modID); //Used to output to the console.
 
@@ -78,12 +85,13 @@ public class HarshCurses implements
     /*----------Localization----------*/
 
     //This is used to load the appropriate localization files based on language.
-    private static String getLangString()
-    {
+    private static String getLangString() {
         return Settings.language.name().toLowerCase();
     }
-    private static final String defaultLanguage = "eng";
 
+    private static final String defaultLanguage = "eng";
+    public static String bathroomBreakGremlin = null;
+    public static int bathroomBreakGremlinHP = 0;
     public static final Map<String, KeywordInfo> keywords = new HashMap<>();
 
     @Override
@@ -98,8 +106,7 @@ public class HarshCurses implements
         if (!defaultLanguage.equals(getLangString())) {
             try {
                 loadLocalization(getLangString());
-            }
-            catch (GdxRuntimeException e) {
+            } catch (GdxRuntimeException e) {
                 e.printStackTrace();
             }
         }
@@ -129,8 +136,7 @@ public class HarshCurses implements
     }
 
     @Override
-    public void receiveEditKeywords()
-    {
+    public void receiveEditKeywords() {
         Gson gson = new Gson();
         String json = Gdx.files.internal(localizationPath(defaultLanguage, "Keywords.json")).readString(String.valueOf(StandardCharsets.UTF_8));
         KeywordInfo[] keywords = gson.fromJson(json, KeywordInfo[].class);
@@ -140,17 +146,14 @@ public class HarshCurses implements
         }
 
         if (!defaultLanguage.equals(getLangString())) {
-            try
-            {
+            try {
                 json = Gdx.files.internal(localizationPath(getLangString(), "Keywords.json")).readString(String.valueOf(StandardCharsets.UTF_8));
                 keywords = gson.fromJson(json, KeywordInfo[].class);
                 for (KeywordInfo keyword : keywords) {
                     keyword.prep();
                     registerKeyword(keyword);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 logger.warn(modID + " does not support " + getLangString() + " keywords.");
             }
         }
@@ -158,8 +161,7 @@ public class HarshCurses implements
 
     private void registerKeyword(KeywordInfo info) {
         BaseMod.addKeyword(modID.toLowerCase(), info.PROPER_NAME, info.NAMES, info.DESCRIPTION);
-        if (!info.ID.isEmpty())
-        {
+        if (!info.ID.isEmpty()) {
             keywords.put(info.ID, info);
         }
     }
@@ -172,12 +174,15 @@ public class HarshCurses implements
     public static String imagePath(String file) {
         return resourcesFolder + "/images/" + file;
     }
+
     public static String characterPath(String file) {
         return resourcesFolder + "/images/character/" + file;
     }
+
     public static String powerPath(String file) {
         return resourcesFolder + "/images/powers/" + file;
     }
+
     public static String relicPath(String file) {
         return resourcesFolder + "/images/relics/" + file;
     }
@@ -206,7 +211,7 @@ public class HarshCurses implements
      * This determines the mod's ID based on information stored by ModTheSpire.
      */
     private static void loadModInfo() {
-        Optional<ModInfo> infos = Arrays.stream(Loader.MODINFOS).filter((modInfo)->{
+        Optional<ModInfo> infos = Arrays.stream(Loader.MODINFOS).filter((modInfo) -> {
             AnnotationDB annotationDB = Patcher.annotationDBMap.get(modInfo.jarURL);
             if (annotationDB == null)
                 return false;
@@ -216,11 +221,11 @@ public class HarshCurses implements
         if (infos.isPresent()) {
             info = infos.get();
             modID = info.ID;
-        }
-        else {
+        } else {
             throw new RuntimeException("Failed to determine mod info/ID based on initializer.");
         }
     }
+
     @Override
     public void receiveEditCards() {
         new AutoAdd(modID)
@@ -259,11 +264,54 @@ public class HarshCurses implements
                             return Loader.isModLoaded("downfall");
                         }
 
+                        if (className.endsWith("BathroomBreak")) {
+                            return Loader.isModLoaded("downfall");
+                        }
+
+                        if (className.endsWith("Eyepatch")) {
+                            return Loader.isModLoaded("downfall");
+                        }
+
                         // Accept all other cards
                         return true;
                     }
                 })
                 .setDefaultSeen(true)
                 .cards();
+    }
+
+    @Override
+    public void receivePostBattle(AbstractRoom abstractRoom) {
+        if (Loader.isModLoaded("downfall")) {
+            if (HarshCurses.bathroomBreakGremlin != null && AbstractDungeon.player instanceof GremlinCharacter) {
+                GremlinCharacter player = (GremlinCharacter) AbstractDungeon.player;
+
+                try {
+                    // Use reflection to access the private enslaved field
+                    Field enslavedField = GremlinMobState.class.getDeclaredField("enslaved");
+                    enslavedField.setAccessible(true);
+                    ArrayList<String> enslaved = (ArrayList<String>) enslavedField.get(player.mobState);
+
+                    // Remove the bathroom break gremlin from enslaved list
+                    enslaved.remove(HarshCurses.bathroomBreakGremlin);
+
+                    // Find the bathroom break gremlin in the mob state and restore their original HP
+                    for (int i = 0; i < player.mobState.gremlins.size(); i++) {
+                        if (player.mobState.gremlins.get(i).equals(HarshCurses.bathroomBreakGremlin)) {
+                            // Restore them to their original HP when they left
+                            player.mobState.gremlinHP.set(i, HarshCurses.bathroomBreakGremlinHP);
+                            break;
+                        }
+                    }
+
+                } catch (Exception e) {
+                    // Log error if needed
+                }
+
+                // Clear the tracking
+                HarshCurses.bathroomBreakGremlin = null;
+                HarshCurses.bathroomBreakGremlinHP = 0;
+            }
+        }
     }
 }

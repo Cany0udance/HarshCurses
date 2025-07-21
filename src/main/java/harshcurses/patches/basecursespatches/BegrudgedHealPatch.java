@@ -9,8 +9,8 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.powers.AbstractPower;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.vfx.combat.HealEffect;
-import harshcurses.powers.BegrudgedPower;
 import harshcurses.helpers.BegrudgedHelper;
+import harshcurses.powers.BegrudgedPower;
 
 import java.util.Iterator;
 

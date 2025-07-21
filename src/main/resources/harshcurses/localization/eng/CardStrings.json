@@ -46,5 +46,13 @@
   "${modID}:LichsSoul": {
     "NAME": "Lich's Soul",
     "DESCRIPTION": "Soulbound. Unplayable. NL When you draw this card, lose 1 collector:Reserve. NL This card cannot be Exhausted."
+  },
+  "${modID}:BathroomBreak": {
+    "NAME": "Bathroom Break",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL When you draw this card, your current Gremlin leaves the battle."
+  },
+  "${modID}:Eyepatch": {
+    "NAME": "Eyepatch",
+    "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, cards that are sneckomod:Muddled can't decrease in cost."
   }
 }

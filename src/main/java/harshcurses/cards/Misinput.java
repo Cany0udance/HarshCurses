@@ -9,9 +9,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.powers.watcher.VigorPower;
 import harshcurses.HarshCurses;
-import harshcurses.orbs.CrapSlime;
 import harshcurses.util.CardStats;
-import slimebound.actions.SlimeSpawnAction;
 
 public class Misinput extends BaseCard {
     public static final String ID = HarshCurses.makeID("Misinput");

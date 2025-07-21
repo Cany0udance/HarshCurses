@@ -7,12 +7,13 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import harshcurses.cards.FaultyGyroscope;
 import harshcurses.helpers.GyroscopeHelper;
-import theHexaghost.GhostflameHelper;
+
+import java.lang.reflect.Method;
 
 public class GyroscopePatches {
-
     @SpirePatch(
-            clz = GhostflameHelper.class,
+            optional = true,
+            cls = "theHexaghost.GhostflameHelper",
             method = "advance",
             paramtypez = {boolean.class}
     )
@@ -22,24 +23,29 @@ public class GyroscopePatches {
             if (GyroscopeHelper.isCursedAdvancingOrRetracting) {
                 return;
             }
-
             // Check if FaultyGyroscope is in hand
             AbstractCard faultyGyroscope = AbstractDungeon.player.hand.group.stream()
                     .filter(card -> card instanceof FaultyGyroscope)
                     .findFirst()
                     .orElse(null);
-
             if (faultyGyroscope != null) {
                 faultyGyroscope.flash(Color.RED);
                 GyroscopeHelper.isCursedAdvancingOrRetracting = true;
-                GhostflameHelper.retract();
+                // Use reflection to call GhostflameHelper.retract()
+                try {
+                    Class<?> ghostflameHelperClass = Class.forName("theHexaghost.GhostflameHelper");
+                    Method retractMethod = ghostflameHelperClass.getMethod("retract");
+                    retractMethod.invoke(null);
+                } catch (Exception e) {
+                    // Silently fail if the method doesn't exist
+                }
                 GyroscopeHelper.isCursedAdvancingOrRetracting = false;
             }
         }
     }
-
     @SpirePatch(
-            clz = GhostflameHelper.class,
+            optional = true,
+            cls = "theHexaghost.GhostflameHelper",
             method = "retract"
     )
     public static class RetractPatch {
@@ -48,17 +54,22 @@ public class GyroscopePatches {
             if (GyroscopeHelper.isCursedAdvancingOrRetracting) {
                 return;
             }
-
             // Check if FaultyGyroscope is in hand
             AbstractCard faultyGyroscope = AbstractDungeon.player.hand.group.stream()
                     .filter(card -> card instanceof FaultyGyroscope)
                     .findFirst()
                     .orElse(null);
-
             if (faultyGyroscope != null) {
                 faultyGyroscope.flash(Color.RED);
                 GyroscopeHelper.isCursedAdvancingOrRetracting = true;
-                GhostflameHelper.advance(false); // Don't end turn on cursed advance
+                // Use reflection to call GhostflameHelper.advance(false)
+                try {
+                    Class<?> ghostflameHelperClass = Class.forName("theHexaghost.GhostflameHelper");
+                    Method advanceMethod = ghostflameHelperClass.getMethod("advance", boolean.class);
+                    advanceMethod.invoke(null, false); // Don't end turn on cursed advance
+                } catch (Exception e) {
+                    // Silently fail if the method doesn't exist
+                }
                 GyroscopeHelper.isCursedAdvancingOrRetracting = false;
             }
         }

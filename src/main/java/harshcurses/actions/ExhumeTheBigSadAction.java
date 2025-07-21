@@ -4,7 +4,6 @@ import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.vfx.cardManip.ShowCardAndObtainEffect;
 import harshcurses.cards.TheBigSad;
 
 public class ExhumeTheBigSadAction extends AbstractGameAction {

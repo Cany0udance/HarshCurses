@@ -1,17 +1,16 @@
 package harshcurses.cards;
 
-import collector.actions.GainReservesAction;
-import collector.util.NewReserves;
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.SoulboundField;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import harshcurses.HarshCurses;
+import harshcurses.actions.LoseFrontGremlinAction;
 import harshcurses.util.CardStats;
 
-public class LichsSoul extends BaseCard {
-    public static final String ID = HarshCurses.makeID("LichsSoul");
+public class BathroomBreak extends BaseCard {
+    public static final String ID = HarshCurses.makeID("BathroomBreak");
     private static final CardStats info = new CardStats(
             CardColor.CURSE,
             CardType.CURSE,
@@ -20,9 +19,10 @@ public class LichsSoul extends BaseCard {
             -2
     );
 
-    public LichsSoul() {
+    public BathroomBreak() {
         super(ID, info);
         SoulboundField.soulbound.set(this, true);
+        this.isEthereal = true;
     }
 
     @Override
@@ -31,17 +31,11 @@ public class LichsSoul extends BaseCard {
     }
 
     public void triggerWhenDrawn() {
-        if (NewReserves.reserveCount() > 0) {
-            AbstractDungeon.actionManager.addToBottom(new GainReservesAction(-1));
-        }
-    }
-
-    public static boolean isLichsSoul(AbstractCard card) {
-        return card instanceof LichsSoul;
+        AbstractDungeon.actionManager.addToBottom(new LoseFrontGremlinAction());
     }
 
     @Override
     public AbstractCard makeCopy() {
-        return new LichsSoul();
+        return new BathroomBreak();
     }
 }

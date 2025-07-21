@@ -1,8 +1,6 @@
 package harshcurses.cards;
 
 import automaton.actions.AddToFuncAction;
-import automaton.cards.AbstractBronzeCard;
-import com.badlogic.gdx.graphics.Color;
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.SoulboundField;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
