@@ -29,7 +29,9 @@
   },
   "${modID}:BlackDiamond": {
     "NAME": "Black Diamond",
-    "DESCRIPTION": "Soulbound. guardianmod:Gem. NL When you draw this card, increase each of your debuffs by 1."
+    "DESCRIPTION": "Soulbound. guardianmod:Gem. NL When you draw this card, increase each of your debuffs by 1. NL This card cannot be Exhausted.",
+    "UPGRADE_DESCRIPTION": "When you draw this card, increase each of your debuffs by 1.",
+    "UPGRADED_DESCRIPTION": "When you draw this card, increase each of your debuffs by 1."
   },
   "${modID}:FaultyGyroscope": {
     "NAME": "Faulty Gyroscope",
@@ -54,5 +56,9 @@
   "${modID}:Eyepatch": {
     "NAME": "Eyepatch",
     "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, cards that are sneckomod:Muddled can't decrease in cost."
+  },
+  "${modID}:AmateurHour": {
+    "NAME": "Amateur Hour",
+    "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, your Stance is ignored."
   }
 }

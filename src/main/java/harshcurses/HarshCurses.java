@@ -252,7 +252,7 @@ public class HarshCurses implements
                             return Loader.isModLoaded("downfall");
                         }
 
-                        if (className.endsWith("Misinput")) {
+                        if (className.endsWith("AmateurHour")) {
                             return Loader.isModLoaded("downfall");
                         }
 
@@ -278,6 +278,16 @@ public class HarshCurses implements
                 })
                 .setDefaultSeen(true)
                 .cards();
+    }
+
+    public enum BlackDiamondType {
+        BLACK(Color.BLACK);
+
+        public Color color;
+
+        private BlackDiamondType(Color color) {
+            this.color = color.cpy();
+        }
     }
 
     @Override

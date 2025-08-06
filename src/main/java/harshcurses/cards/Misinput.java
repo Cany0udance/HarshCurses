@@ -1,3 +1,6 @@
+
+/*
+
 package harshcurses.cards;
 
 import champ.powers.CounterPower;
@@ -9,6 +12,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.powers.watcher.VigorPower;
 import harshcurses.HarshCurses;
+import harshcurses.cards.BaseCard;
 import harshcurses.util.CardStats;
 
 public class Misinput extends BaseCard {
@@ -50,3 +54,5 @@ public class Misinput extends BaseCard {
         return new Misinput();
     }
 }
+
+ */
