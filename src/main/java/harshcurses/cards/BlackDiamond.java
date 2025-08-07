@@ -44,7 +44,7 @@ public class BlackDiamond extends AbstractGemCard {
     }
 
     public static void gemEffect(AbstractPlayer p, AbstractMonster m) {
-        AbstractDungeon.actionManager.addToBottom(new IncreaseDebuffsAction(p, 1));
+
     }
 
     public void use(AbstractPlayer p, AbstractMonster m) {

@@ -272,6 +272,22 @@ public class HarshCurses implements
                             return Loader.isModLoaded("downfall");
                         }
 
+                        if (className.endsWith("FourthRateDeck")) {
+                            return Loader.isModLoaded("anniv5");
+                        }
+
+                        if (className.endsWith("GrizzlyBear")) {
+                            return Loader.isModLoaded("fishing");
+                        }
+
+                        if (className.endsWith("AnkleMonitor")) {
+                            return Loader.isModLoaded("thorton");
+                        }
+
+                        if (className.endsWith("GumOnShoe")) {
+                            return Loader.isModLoaded("thorton");
+                        }
+
                         // Accept all other cards
                         return true;
                     }

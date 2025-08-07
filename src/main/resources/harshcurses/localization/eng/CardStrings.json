@@ -60,5 +60,21 @@
   "${modID}:AmateurHour": {
     "NAME": "Amateur Hour",
     "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, your Stance is ignored."
+  },
+  "${modID}:FourthRateDeck": {
+    "NAME": "4th Rate Deck",
+    "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, cards from the Pack you have the most cards from are Unplayable."
+  },
+  "${modID}:GrizzlyBear": {
+    "NAME": "Grizzly Bear",
+    "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, all fishing:Fish in hand are instantly destroyed."
+  },
+  "${modID}:AnkleMonitor": {
+    "NAME": "Ankle Monitor",
+    "DESCRIPTION": "Soulbound. Retain. Unplayable. NL While in hand, you cannot thethorton:Run."
+  },
+  "${modID}:GumOnShoe": {
+    "NAME": "Gum on Shoe",
+    "DESCRIPTION": "Unplayable. NL While in your deck, you gain 50% less Gold."
   }
 }
