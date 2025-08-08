@@ -76,5 +76,21 @@
   "${modID}:GumOnShoe": {
     "NAME": "Gum on Shoe",
     "DESCRIPTION": "Unplayable. NL While in your deck, you gain 50% less Gold."
+  },
+  "${modID}:ForcedFullness": {
+    "NAME": "Forced Fullness",
+    "DESCRIPTION": "Soulbound. NL Remove all your thevacant:Gems. NL While in hand, you cannot be thevacant:Hollow."
+  },
+  "${modID}:Butterfingers": {
+    "NAME": "Butterfingers",
+    "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, Ethereal cards automatically discard."
+  },
+  "${modID}:PainfulLogistics": {
+    "NAME": "Painful Logistics",
+    "DESCRIPTION": "Soulbound. NL Shuffle a Jam into your draw pile. NL While in hand, whenever you would bladegunner:Load ALL, bladegunner:Load 1 instead."
+  },
+  "${modID}:Purism": {
+    "NAME": "Purism",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL While in hand, lose 1 HP whenever you play a card that is changed from its vanilla counterpart."
   }
 }

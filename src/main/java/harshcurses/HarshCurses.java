@@ -288,6 +288,18 @@ public class HarshCurses implements
                             return Loader.isModLoaded("thorton");
                         }
 
+                        if (className.endsWith("ForcedFullness")) {
+                            return Loader.isModLoaded("theVacant");
+                        }
+
+                        if (className.endsWith("Butterfingers")) {
+                            return Loader.isModLoaded("EphemeralMod");
+                        }
+
+                        if (className.endsWith("PainfulLogistics")) {
+                            return Loader.isModLoaded("bladegunner");
+                        }
+
                         // Accept all other cards
                         return true;
                     }
