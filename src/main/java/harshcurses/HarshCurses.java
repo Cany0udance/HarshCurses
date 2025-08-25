@@ -300,6 +300,14 @@ public class HarshCurses implements
                             return Loader.isModLoaded("bladegunner");
                         }
 
+                        if (className.endsWith("ShareTheLove")) {
+                            return Loader.isModLoaded("TheBrainlets");
+                        }
+
+                        if (className.endsWith("ScourgeOfTheCaribbean")) {
+                            return Loader.isModLoaded("sts-mod-the-blackbeard");
+                        }
+
                         // Accept all other cards
                         return true;
                     }

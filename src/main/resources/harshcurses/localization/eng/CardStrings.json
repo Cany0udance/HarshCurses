@@ -92,5 +92,17 @@
   "${modID}:Purism": {
     "NAME": "Purism",
     "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL While in hand, lose 1 HP whenever you play a card that is changed from its vanilla counterpart."
+  },
+  "${modID}:ShareTheLove": {
+    "NAME": "Share The Love",
+    "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, temporary buffs and *Plated *Armor are also given to the enemy."
+  },
+  "${modID}:ScourgeOfTheCaribbean": {
+    "NAME": "Scourge of the Caribbean",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL When you draw this card, your most valuable card in hand gains Fleeting for the turn."
+  },
+  "${modID}:Trespasser": {
+    "NAME": "Trespasser",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL When you draw this card, a *Gremlin *Thief with -8 Strength joins the battle."
   }
 }
