@@ -296,7 +296,7 @@ public class HarshCurses implements
                             return Loader.isModLoaded("EphemeralMod");
                         }
 
-                        if (className.endsWith("PainfulLogistics")) {
+                        if (className.endsWith("BulletEatingSquirrel")) {
                             return Loader.isModLoaded("bladegunner");
                         }
 
@@ -306,6 +306,18 @@ public class HarshCurses implements
 
                         if (className.endsWith("ScourgeOfTheCaribbean")) {
                             return Loader.isModLoaded("sts-mod-the-blackbeard");
+                        }
+
+                        if (className.endsWith("Trespasser")) {
+                            return Loader.isModLoaded("bogwarden");
+                        }
+
+                        if (className.endsWith("VeryVeryInteresting")) {
+                            return Loader.isModLoaded("researchersmod");
+                        }
+
+                        if (className.endsWith("Impurity")) {
+                            return Loader.isModLoaded("ThePrismatic");
                         }
 
                         // Accept all other cards

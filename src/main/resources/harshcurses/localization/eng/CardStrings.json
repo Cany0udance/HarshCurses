@@ -85,9 +85,9 @@
     "NAME": "Butterfingers",
     "DESCRIPTION": "Soulbound. Unplayable. NL While in hand, Ethereal cards automatically discard."
   },
-  "${modID}:PainfulLogistics": {
-    "NAME": "Painful Logistics",
-    "DESCRIPTION": "Soulbound. NL Shuffle a Jam into your draw pile. NL While in hand, whenever you would bladegunner:Load ALL, bladegunner:Load 1 instead."
+  "${modID}:BulletEatingSquirrel": {
+    "NAME": "Bullet-Eating Squirrel",
+    "DESCRIPTION": "Soulbound. NL While in hand, Reloading loads 1 less bullet than expected."
   },
   "${modID}:Purism": {
     "NAME": "Purism",
@@ -104,5 +104,25 @@
   "${modID}:Trespasser": {
     "NAME": "Trespasser",
     "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL When you draw this card, a *Gremlin *Thief with -8 Strength joins the battle."
+  },
+  "${modID}:VeryVeryInteresting": {
+    "NAME": "VERY, VERY INTERESTING",
+    "DESCRIPTION": "Soulbound. Unplayable. NL When you draw this card, researchersmod:Experiment !researchersmod:Trial! - 1 researchersmod:Completion: Take 2 damage. researchersmod:Complete: Add a copy of this card to your deck. This researchersmod:Experiment cannot be prematurely researchersmod:Completed."
+  },
+  "${modID}:DevilishImpurity": {
+    "NAME": "Devilish Impurity",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL While in hand, lose 2 HP and gain 2 ${modID}:Begrudged whenever you play a non-Red card."
+  },
+  "${modID}:ToxicImpurity": {
+    "NAME": "Toxic Impurity",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL While in hand, shuffle a *Toxic *Impurity into your draw pile whenever you play a non-Green card."
+  },
+  "${modID}:ProgrammedImpurity": {
+    "NAME": "Programmed Impurity",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL While in hand, Channel 1 ${modID}:Brick and lose 1 Strength whenever you play a non-Blue card."
+  },
+  "${modID}:MoroseImpurity": {
+    "NAME": "Morose Impurity",
+    "DESCRIPTION": "Soulbound. Unplayable. Ethereal. NL While in hand, enter ${modID}:Depression whenever you play a non-Purple card."
   }
 }
