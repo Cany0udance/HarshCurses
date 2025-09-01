@@ -2,10 +2,15 @@ package harshcurses;
 
 import basemod.AutoAdd;
 import basemod.BaseMod;
+import basemod.ModLabeledToggleButton;
+import basemod.ModPanel;
 import basemod.interfaces.*;
 import com.badlogic.gdx.graphics.Color;
+import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import gremlin.characters.GremlinCharacter;
 import gremlin.patches.GremlinMobState;
@@ -33,6 +38,7 @@ import org.clapper.util.classutil.ClassFinder;
 import org.clapper.util.classutil.ClassInfo;
 import org.scannotation.AnnotationDB;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -53,15 +59,18 @@ public class HarshCurses implements
 
     private static final String resourcesFolder = checkResourcesPath();
     public static final Logger logger = LogManager.getLogger(modID); //Used to output to the console.
-
-    //This is used to prefix the IDs of various objects like cards and relics,
-    //to avoid conflicts between different mods using the same name for things.
+    private static SpireConfig config;
+    public static boolean alwaysGiveCurse;
     public static String makeID(String id) {
         return modID + ":" + id;
     }
 
     //This will be called by ModTheSpire because of the @SpireInitializer annotation at the top of the class.
-    public static void initialize() {
+    public static void initialize() throws IOException {
+        Properties defaults = new Properties();
+        defaults.setProperty("alwaysGiveCurse", "false");
+        config = new SpireConfig(modID, "config", defaults);
+        alwaysGiveCurse = config.getBool("alwaysGiveCurse");
         new HarshCurses();
     }
 
@@ -72,14 +81,19 @@ public class HarshCurses implements
 
     @Override
     public void receivePostInitialize() {
-        //This loads the image used as an icon in the in-game mods menu.
-        Texture badgeTexture = TextureLoader.getTexture(imagePath("badge.png"));
-        //Set up the mod information displayed in the in-game mods menu.
-        //The information used is taken from your pom.xml file.
+        ModPanel settingsPanel = new ModPanel();
 
-        //If you want to set up a config panel, that will be done here.
-        //The Mod Badges page has a basic example of this, but setting up config is overall a bit complex.
-        BaseMod.registerModBadge(badgeTexture, info.Name, GeneralUtils.arrToString(info.Authors), info.Description, null);
+        String toggleText1 = "Give harsh curses even if not on Ascension 10 or higher";
+
+        // Always display names toggle
+        settingsPanel.addUIElement(new ModLabeledToggleButton(toggleText1, 350, 700, Settings.CREAM_COLOR, FontHelper.charDescFont, config.getBool("alwaysGiveCurse"), settingsPanel, label -> {}, button -> {
+            alwaysGiveCurse = button.enabled;
+            config.setBool("alwaysGiveCurse", button.enabled);
+            try {config.save();} catch (Exception e) {}
+        }));
+
+        Texture badgeTexture = TextureLoader.getTexture(imagePath("badge.png"));
+        BaseMod.registerModBadge(badgeTexture, info.Name, GeneralUtils.arrToString(info.Authors), info.Description, settingsPanel);
     }
 
     /*----------Localization----------*/

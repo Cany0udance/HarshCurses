@@ -1,5 +1,6 @@
 package harshcurses.patches;
 
+import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.curses.AscendersBane;
@@ -7,6 +8,7 @@ import com.megacrit.cardcrawl.cards.curses.Normality;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
+import harshcurses.HarshCurses;
 import harshcurses.cards.*;
 import javassist.CtBehavior;
 
@@ -15,15 +17,11 @@ import javassist.CtBehavior;
         method = "dungeonTransitionSetup"
 )
 public class HarshCursesPatch {
-
-    @SpireInsertPatch(
-            locator = Locator.class
-    )
+    @SpirePostfixPatch
     public static void replaceAscendersBane() {
-        if (AbstractDungeon.ascensionLevel >= 10) {
+        if (AbstractDungeon.ascensionLevel >= 10 || HarshCurses.alwaysGiveCurse) {
             // Remove Ascender's Bane if it exists (direct collection manipulation)
             AbstractDungeon.player.masterDeck.group.removeIf(card -> card.cardID.equals(AscendersBane.ID));
-
             // Add the appropriate harsh curse based on character
             AbstractCard harshCurse = getHarshCurseForCharacter(AbstractDungeon.player);
             if (harshCurse != null) {
@@ -38,10 +36,8 @@ public class HarshCursesPatch {
             }
         }
     }
-
     private static AbstractCard getHarshCurseForCharacter(AbstractPlayer player) {
         String className = player.chosenClass.name();
-
         if (className.endsWith("Prismatic")) {
             AbstractCard[] prismaticCurses = {
                     new DevilishImpurity(),
@@ -51,7 +47,6 @@ public class HarshCursesPatch {
             };
             return prismaticCurses[AbstractDungeon.cardRandomRng.random(prismaticCurses.length - 1)];
         }
-
         switch (className) {
             case "IRONCLAD":
                 return new SatansGrudge();
@@ -66,7 +61,10 @@ public class HarshCursesPatch {
             case "SLIMEBOUND":
                 return new SplitCrap();
             case "GUARDIAN":
-                return new BlackDiamond();
+                if (Loader.isModLoaded("downfall")) {
+                    return createCardByReflection("harshcurses.cards.BlackDiamond");
+                }
+                break;
             case "THE_SPIRIT":
                 return new FaultyGyroscope();
             case "THE_CHAMP":
@@ -88,7 +86,10 @@ public class HarshCursesPatch {
             case "THE_PACKMASTER":
                 return new FourthRateDeck();
             case "RESEARCHERS":
-                return new VeryVeryInteresting();
+                if (Loader.isModLoaded("researchersmod")) {
+                    return createCardByReflection("harshcurses.cards.VeryVeryInteresting");
+                }
+                break;
             case "THE_EPHEMERAL":
                 return new Butterfingers();
             case "THE_VACANT":
@@ -102,15 +103,14 @@ public class HarshCursesPatch {
             default:
                 return new CultistMicrophone();
         }
+        return new CultistMicrophone();
     }
-
-    private static class Locator extends SpireInsertLocator {
-        @Override
-        public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
-            Matcher finalMatcher = new Matcher.MethodCallMatcher(
-                    UnlockTracker.class, "markCardAsSeen"
-            );
-            return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
+    private static AbstractCard createCardByReflection(String className) {
+        try {
+            Class<?> cardClass = Class.forName(className);
+            return (AbstractCard) cardClass.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            return new CultistMicrophone();
         }
     }
 }
