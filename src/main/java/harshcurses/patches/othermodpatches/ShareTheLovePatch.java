@@ -12,6 +12,7 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.powers.*;
 import harshcurses.cards.ShareTheLove;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 @SpirePatch(
@@ -19,8 +20,8 @@ import java.lang.reflect.Field;
         method = "update"
 )
 public class ShareTheLovePatch {
-
     private static final Field powerToApplyField;
+    private static final Class<?> loseThornsPowerClass;
 
     static {
         try {
@@ -29,6 +30,15 @@ public class ShareTheLovePatch {
         } catch (NoSuchFieldException e) {
             throw new RuntimeException("Could not access powerToApply field", e);
         }
+
+        // Try to load LoseThornsPower class, will be null if mod isn't loaded
+        Class<?> tempClass = null;
+        try {
+            tempClass = Class.forName("brainlets.powers.LoseThornsPower");
+        } catch (ClassNotFoundException e) {
+            // Mod not loaded, that's fine
+        }
+        loseThornsPowerClass = tempClass;
     }
 
     @SpirePostfixPatch
@@ -38,12 +48,10 @@ public class ShareTheLovePatch {
             if (!__instance.isDone) {
                 return;
             }
-
             // Only trigger when power is being applied to the player
             if (!(__instance.target instanceof AbstractPlayer)) {
                 return;
             }
-
             AbstractPlayer player = (AbstractPlayer) __instance.target;
 
             // Check if ShareTheLove is in hand
@@ -54,7 +62,6 @@ public class ShareTheLovePatch {
                     break;
                 }
             }
-
             if (!hasShareTheLove) {
                 return;
             }
@@ -65,7 +72,8 @@ public class ShareTheLovePatch {
             // Check if this is a power we want to redirect
             boolean shouldRedirect = powerToApply instanceof LoseStrengthPower ||
                     powerToApply instanceof LoseDexterityPower ||
-                    powerToApply instanceof PlatedArmorPower;
+                    powerToApply instanceof PlatedArmorPower ||
+                    (loseThornsPowerClass != null && loseThornsPowerClass.isInstance(powerToApply));
 
             if (shouldRedirect) {
                 // Flash all ShareTheLove cards red when triggered
@@ -90,6 +98,15 @@ public class ShareTheLovePatch {
                             positivePower = new DexterityPower(monster, powerToApply.amount);
                         } else if (powerToApply instanceof PlatedArmorPower) {
                             enemyPower = new PlatedArmorPower(monster, powerToApply.amount);
+                        } else if (loseThornsPowerClass != null && loseThornsPowerClass.isInstance(powerToApply)) {
+                            // Handle LoseThornsPower via reflection
+                            try {
+                                Constructor<?> constructor = loseThornsPowerClass.getConstructor(AbstractCreature.class, int.class);
+                                enemyPower = (AbstractPower) constructor.newInstance(monster, powerToApply.amount);
+                                positivePower = new ThornsPower(monster, powerToApply.amount);
+                            } catch (Exception e) {
+                                System.err.println("ShareTheLovePatch: Failed to create LoseThornsPower: " + e.getMessage());
+                            }
                         }
 
                         // Apply powers using actions to avoid conflicts

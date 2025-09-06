@@ -1,3 +1,6 @@
+
+/*
+
 package harshcurses.patches.othermodpatches;
 
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
@@ -30,3 +33,5 @@ public class ForcedFullnessPatch {
                 .anyMatch(card -> card instanceof ForcedFullness);
     }
 }
+
+ */

@@ -11,10 +11,14 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
+import com.megacrit.cardcrawl.orbs.EmptyOrbSlot;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import gremlin.GremlinMod;
 import gremlin.characters.GremlinCharacter;
+import gremlin.orbs.GremlinStandby;
 import gremlin.patches.GremlinMobState;
 import harshcurses.cards.BaseCard;
+import harshcurses.orbs.Brick;
 import harshcurses.util.GeneralUtils;
 import harshcurses.util.KeywordInfo;
 import harshcurses.util.TextureLoader;
@@ -49,6 +53,7 @@ public class HarshCurses implements
         EditKeywordsSubscriber,
         EditCardsSubscriber,
         PostBattleSubscriber,
+        OnPlayerTurnStartSubscriber,
         PostInitializeSubscriber {
     public static ModInfo info;
     public static String modID; //Edit your pom.xml to change this
@@ -302,9 +307,9 @@ public class HarshCurses implements
                             return Loader.isModLoaded("thorton");
                         }
 
-                        if (className.endsWith("ForcedFullness")) {
-                            return Loader.isModLoaded("theVacant");
-                        }
+                      //  if (className.endsWith("ForcedFullness")) {
+                     //       return Loader.isModLoaded("theVacant");
+                     //   }
 
                         if (className.endsWith("Butterfingers")) {
                             return Loader.isModLoaded("EphemeralMod");
@@ -342,6 +347,11 @@ public class HarshCurses implements
                 .cards();
     }
 
+    @Override
+    public void receiveOnPlayerTurnStart() {
+        Brick.bricksChanneledThisTurn = 0;
+    }
+
     public enum BlackDiamondType {
         BLACK(Color.BLACK);
 
@@ -358,26 +368,45 @@ public class HarshCurses implements
             if (HarshCurses.bathroomBreakGremlin != null && AbstractDungeon.player instanceof GremlinCharacter) {
                 GremlinCharacter player = (GremlinCharacter) AbstractDungeon.player;
 
+                // Easter egg: Sneak gremlin has 10% chance to not return if bogwarden is loaded
+                if (Loader.isModLoaded("bogwarden") &&
+                        HarshCurses.bathroomBreakGremlin.equals("sneak") &&
+                        AbstractDungeon.miscRng.randomBoolean(0.1f)) {
+                    return;
+                }
+
                 try {
-                    // Use reflection to access the private enslaved field
+                    // Remove from enslaved list
                     Field enslavedField = GremlinMobState.class.getDeclaredField("enslaved");
                     enslavedField.setAccessible(true);
                     ArrayList<String> enslaved = (ArrayList<String>) enslavedField.get(player.mobState);
-
-                    // Remove the bathroom break gremlin from enslaved list
                     enslaved.remove(HarshCurses.bathroomBreakGremlin);
 
-                    // Find the bathroom break gremlin in the mob state and restore their original HP
+                    // Restore HP in mob state
                     for (int i = 0; i < player.mobState.gremlins.size(); i++) {
                         if (player.mobState.gremlins.get(i).equals(HarshCurses.bathroomBreakGremlin)) {
-                            // Restore them to their original HP when they left
                             player.mobState.gremlinHP.set(i, HarshCurses.bathroomBreakGremlinHP);
+
+                            // Also restore the gremlin to orb slots if not in position 0
+                            if (i > 0) {
+                                // Find an empty orb slot and replace it with the restored gremlin
+                                for (int j = 0; j < player.orbs.size(); j++) {
+                                    if (player.orbs.get(j) instanceof EmptyOrbSlot) {
+                                        GremlinStandby restoredOrb = GremlinMod.getGremlinOrb(HarshCurses.bathroomBreakGremlin);
+                                        if (restoredOrb != null) {
+                                            restoredOrb.hp = HarshCurses.bathroomBreakGremlinHP;
+                                            player.orbs.set(j, restoredOrb);
+                                            restoredOrb.setSlot(j, player.maxOrbs);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
                             break;
                         }
                     }
-
                 } catch (Exception e) {
-                    // Log error if needed
+                    e.printStackTrace();
                 }
 
                 // Clear the tracking

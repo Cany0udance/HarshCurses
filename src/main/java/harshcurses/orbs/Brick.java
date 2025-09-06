@@ -1,5 +1,6 @@
 package harshcurses.orbs;
 
+import basemod.BaseMod;
 import basemod.abstracts.CustomOrb;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,7 +27,8 @@ public class Brick extends CustomOrb {
     private static final float BRICK_WIDTH = 96.0f;
     private static final int BASE_PASSIVE = 1;
     private static final int BASE_EVOKE = 1;
-
+    public static int bricksChanneledThisTurn = 0;
+    private static final int MAX_BRICKS_PER_TURN = 15;
     private float rotation = 0.0f;
     private static final float ROTATION_SPEED = 30.0f; // degrees per second
 
@@ -56,8 +58,11 @@ public class Brick extends CustomOrb {
 
     @Override
     public void onEvoke() {
-        // Channel a Brick when evoked
-        AbstractDungeon.actionManager.addToBottom(new ChannelAction(new Brick()));
+
+        if (bricksChanneledThisTurn < MAX_BRICKS_PER_TURN) {
+            bricksChanneledThisTurn++;
+            AbstractDungeon.actionManager.addToBottom(new ChannelAction(new Brick()));
+        }
     }
 
     private AbstractMonster getEnemyWithMostHP() {

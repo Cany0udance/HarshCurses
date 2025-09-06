@@ -1,3 +1,6 @@
+
+/*
+
 package harshcurses.cards;
 
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.SoulboundField;
@@ -34,3 +37,5 @@ public class ForcedFullness extends BaseCard {
         return new ForcedFullness();
     }
 }
+
+ */

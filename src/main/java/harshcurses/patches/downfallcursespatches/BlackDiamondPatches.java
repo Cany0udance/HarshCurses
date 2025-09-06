@@ -6,15 +6,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.SoulboundField;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
+import com.megacrit.cardcrawl.actions.animations.VFXAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInHandAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.vfx.AbstractGameEffect;
+import downfall.actions.ForceWaitAction;
 import harshcurses.HarshCurses;
 import harshcurses.actions.IncreaseDebuffsAction;
 import harshcurses.cards.BlackDiamond;
@@ -23,6 +27,7 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -895,4 +900,221 @@ public class BlackDiamondPatches {
             }
         }
     }
+
+    @SpirePatch(
+            optional = true,
+            cls = "guardian.cards.GemFire",
+            method = "use",
+            paramtypes = {"com.megacrit.cardcrawl.characters.AbstractPlayer", "com.megacrit.cardcrawl.monsters.AbstractMonster"}
+    )
+    public static class gemFireUsePatch {
+        @SpirePrefixPatch
+        public static SpireReturn<Void> Prefix(Object __instance, Object p, Object m) {
+            try {
+                // Collect all socket objects (mixed types)
+                ArrayList<Object> tempSockets = new ArrayList<>();
+                collectSocketsFromGroupSafe(__instance, ((AbstractPlayer)p).hand, tempSockets);
+                collectSocketsFromGroupSafe(__instance, ((AbstractPlayer)p).drawPile, tempSockets);
+                collectSocketsFromGroupSafe(__instance, ((AbstractPlayer)p).discardPile, tempSockets);
+                collectSocketsFromStasisSafe(__instance, p, tempSockets);
+
+                // Create visual effects for each socket
+                for (int i = 0; i < tempSockets.size(); i++) {
+                    Object socket = tempSockets.get(i);
+                    // Create the visual effect - we'll use reflection to call the original effect
+                    createGemShootEffect(socket, i, m, tempSockets.size());
+                }
+
+                if (tempSockets.size() > 0) {
+                    AbstractDungeon.actionManager.addToBottom(new ForceWaitAction(1.25F + 0.05F * (float)tempSockets.size()));
+                }
+
+                // Deal damage
+                DamageInfo damageInfo = new DamageInfo((AbstractCreature)p,
+                        ((AbstractCard)__instance).damage,
+                        ((AbstractCard)__instance).damageTypeForTurn);
+                AbstractDungeon.actionManager.addToBottom(new DamageAction((AbstractCreature)m, damageInfo, AbstractGameAction.AttackEffect.FIRE));
+
+                // Separate synthetic sockets (including Black Diamond) from others
+                ArrayList<Object> nonSyntheticSockets = new ArrayList<>();
+                ArrayList<Object> syntheticSockets = new ArrayList<>();
+
+                for (Object socket : tempSockets) {
+                    if (isSyntheticType(socket)) {
+                        syntheticSockets.add(socket);
+                    } else {
+                        nonSyntheticSockets.add(socket);
+                    }
+                }
+
+                // Process non-synthetic first, then synthetic
+                nonSyntheticSockets.addAll(syntheticSockets);
+
+                for (Object socket : nonSyntheticSockets) {
+                    processSocketSafe(__instance, p, m, socket);
+                    AbstractDungeon.actionManager.addToBottom(new ForceWaitAction(0.02F));
+                }
+
+                return SpireReturn.Return();
+            } catch (Exception e) {
+                // Silently fail and let original method handle it
+                return SpireReturn.Continue();
+            }
+        }
+
+        private static void collectSocketsFromGroupSafe(Object gemFireInstance, CardGroup group, ArrayList<Object> tempSockets) {
+            try {
+                Class<?> guardianCardClass = Class.forName("guardian.cards.AbstractGuardianCard");
+                Field socketsField = guardianCardClass.getField("sockets");
+
+                for (AbstractCard card : group.group) {
+                    if (guardianCardClass.isInstance(card)) {
+                        ArrayList sockets = (ArrayList) socketsField.get(card);
+                        for (Object socket : sockets) {
+                            if (socket != null) {
+                                tempSockets.add(socket);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Silently fail
+            }
+        }
+
+        private static void collectSocketsFromStasisSafe(Object gemFireInstance, Object player, ArrayList<Object> tempSockets) {
+            try {
+                // Try to call the original collectSocketsFromStasis method via reflection
+                Class<?> gemFireClass = Class.forName("guardian.cards.GemFire");
+                Method collectStasisMethod = gemFireClass.getDeclaredMethod("collectSocketsFromStasis",
+                        AbstractPlayer.class, ArrayList.class);
+                collectStasisMethod.setAccessible(true);
+
+                // Create a temporary ArrayList for the original method
+                ArrayList<Object> originalSockets = new ArrayList<>();
+                collectStasisMethod.invoke(gemFireInstance, player, originalSockets);
+                tempSockets.addAll(originalSockets);
+            } catch (Exception e) {
+                // If reflection fails, try manual stasis collection
+                try {
+                    Class<?> stasisManagerClass = Class.forName("guardian.stances.StasisManager");
+                    Field instanceField = stasisManagerClass.getDeclaredField("instance");
+                    Object stasisManager = instanceField.get(null);
+                    Field stasisCardsField = stasisManagerClass.getDeclaredField("stasisCards");
+                    ArrayList stasisCards = (ArrayList) stasisCardsField.get(stasisManager);
+
+                    Class<?> guardianCardClass = Class.forName("guardian.cards.AbstractGuardianCard");
+                    Field socketsField = guardianCardClass.getField("sockets");
+
+                    for (Object card : stasisCards) {
+                        if (guardianCardClass.isInstance(card)) {
+                            ArrayList sockets = (ArrayList) socketsField.get(card);
+                            for (Object socket : sockets) {
+                                if (socket != null) {
+                                    tempSockets.add(socket);
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    // Silently fail
+                }
+            }
+        }
+
+        private static void createGemShootEffect(Object socket, int index, Object monster, int totalSockets) {
+            try {
+                // Try to create the original GemShootEffect
+                Class<?> gemFireActionClass = Class.forName("guardian.actions.GemFireAction");
+                Class<?> gemShootEffectClass = null;
+
+                // Find the inner GemShootEffect class
+                for (Class<?> innerClass : gemFireActionClass.getDeclaredClasses()) {
+                    if (innerClass.getSimpleName().equals("GemShootEffect")) {
+                        gemShootEffectClass = innerClass;
+                        break;
+                    }
+                }
+
+                if (gemShootEffectClass != null) {
+                    Constructor<?> constructor = gemShootEffectClass.getDeclaredConstructor(
+                            Object.class, Integer.TYPE, AbstractCreature.class, Integer.TYPE);
+                    constructor.setAccessible(true);
+                    Object effect = constructor.newInstance(socket, index, monster, totalSockets);
+                    AbstractDungeon.actionManager.addToBottom(new VFXAction((AbstractGameEffect) effect, 0.0F));
+                }
+            } catch (Exception e) {
+                // Silently fail - visual effect just won't show
+            }
+        }
+
+        private static boolean isSyntheticType(Object socket) {
+            if (socket instanceof HarshCurses.BlackDiamondType) {
+                return true; // Treat Black Diamond as synthetic for processing order
+            }
+
+            try {
+                Class<?> socketTypesClass = Class.forName("guardian.GuardianMod$socketTypes");
+                if (socketTypesClass.isInstance(socket)) {
+                    return socket.toString().equals("SYNTHETIC");
+                }
+            } catch (Exception e) {
+                // Silently fail
+            }
+            return false;
+        }
+
+        private static void processSocketSafe(Object gemFireInstance, Object player, Object monster, Object socket) {
+            try {
+                if (socket instanceof HarshCurses.BlackDiamondType) {
+                    // Handle Black Diamond
+                    BlackDiamond.gemEffect((AbstractPlayer) player, (AbstractMonster) monster);
+                } else {
+                    // Try to call the original processSocket method
+                    Class<?> gemFireClass = Class.forName("guardian.cards.gemFire");
+                    Method processSocketMethod = gemFireClass.getDeclaredMethod("processSocket",
+                            AbstractPlayer.class, AbstractMonster.class, Object.class);
+                    processSocketMethod.setAccessible(true);
+                    processSocketMethod.invoke(gemFireInstance, player, monster, socket);
+                }
+            } catch (Exception e) {
+                // Try alternative approach - call gem effect directly
+                try {
+                    String gemType = socket.toString();
+                    Class<?> gemClass = getGemClassForEffect(gemType);
+                    if (gemClass != null) {
+                        Method gemEffectMethod = gemClass.getDeclaredMethod("gemEffect",
+                                AbstractPlayer.class, AbstractMonster.class);
+                        gemEffectMethod.invoke(null, player, monster);
+                    }
+                } catch (Exception ex) {
+                    // Silently fail
+                }
+            }
+        }
+
+        private static Class<?> getGemClassForEffect(String gemType) {
+            try {
+                String className = "guardian.cards.";
+                switch (gemType) {
+                    case "RED": return Class.forName(className + "Gem_Red");
+                    case "GREEN": return Class.forName(className + "Gem_Green");
+                    case "ORANGE": return Class.forName(className + "Gem_Orange");
+                    case "WHITE": return Class.forName(className + "Gem_White");
+                    case "CYAN": return Class.forName(className + "Gem_Cyan");
+                    case "BLUE": return Class.forName(className + "Gem_Blue");
+                    case "CRIMSON": return Class.forName(className + "Gem_Crimson");
+                    case "FRAGMENTED": return Class.forName(className + "Gem_Fragmented");
+                    case "PURPLE": return Class.forName(className + "Gem_Purple");
+                    case "SYNTHETIC": return Class.forName(className + "Gem_Synthetic");
+                    case "YELLOW": return Class.forName(className + "Gem_Yellow");
+                    case "LIGHTBLUE": return Class.forName(className + "Gem_Lightblue");
+                    default: return null;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
 }

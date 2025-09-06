@@ -1,3 +1,6 @@
+
+/*
+
 package harshcurses.actions;
 
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
@@ -33,3 +36,5 @@ public class RemoveAllGemsAction extends AbstractGameAction {
         this.isDone = true;
     }
 }
+
+ */

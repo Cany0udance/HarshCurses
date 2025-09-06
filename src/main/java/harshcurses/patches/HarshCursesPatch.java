@@ -19,6 +19,11 @@ import javassist.CtBehavior;
 public class HarshCursesPatch {
     @SpirePostfixPatch
     public static void replaceAscendersBane() {
+
+        if (AbstractDungeon.actNum != 1) {
+            return;
+        }
+
         if (AbstractDungeon.ascensionLevel >= 10 || HarshCurses.alwaysGiveCurse) {
             // Remove Ascender's Bane if it exists (direct collection manipulation)
             AbstractDungeon.player.masterDeck.group.removeIf(card -> card.cardID.equals(AscendersBane.ID));
@@ -28,6 +33,13 @@ public class HarshCursesPatch {
                 AbstractDungeon.player.masterDeck.addToTop(harshCurse);
                 UnlockTracker.markCardAsSeen(harshCurse.cardID);
             }
+
+            if (Loader.isModLoaded("Bundle_Of_Peglin")) {
+                // Remove any existing Terriball cards from the deck
+                AbstractDungeon.player.masterDeck.group.removeIf(card ->
+                        card.cardID.equals("Bundle_Of_Peglin:TerriballCurseSoulbound"));
+            }
+
             if (AbstractDungeon.player.chosenClass.name().equals("THE_THORT")) {
                 AbstractDungeon.player.masterDeck.group.removeIf(card -> card.cardID.equals(Normality.ID));
                 AbstractCard gumOnShoe = new GumOnShoe();
@@ -92,8 +104,6 @@ public class HarshCursesPatch {
                 break;
             case "THE_EPHEMERAL":
                 return new Butterfingers();
-            case "THE_VACANT":
-                return new ForcedFullness();
             case "BLACKBEARD_CLASS":
                 return new ScourgeOfTheCaribbean();
             case "THE_BOGWARDEN_OCEAN":
